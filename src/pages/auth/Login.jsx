@@ -1,6 +1,20 @@
 import React from "react";
+import { auth, provider } from "../../config/firebase-config";
+import { signInWithPopup } from "firebase/auth";
+import secureLocalStorage from "react-secure-storage";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+  const navigate = useNavigate()
+  const signInWithGoogle = async()=>{
+    const results = await signInWithPopup(auth, provider);
+    const obj = [
+      results.user.providerData[0], results.user.emailVerified, results.user.metadata.lastSignInTime
+    ]
+    secureLocalStorage.setItem('user',obj);
+    navigate('/expense')
+  }
   return (
     <div>
       <section className="relative flex flex-wrap lg:h-screen lg:items-center">
@@ -12,7 +26,7 @@ const Login = () => {
             </h1>
 
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <button className="block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto">
+              <button className="block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto" onClick={signInWithGoogle}>
                 Get Started
               </button>
             </div>

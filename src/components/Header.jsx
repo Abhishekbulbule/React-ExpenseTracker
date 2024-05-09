@@ -1,7 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Logout } from "../pages/auth/Logout";
+import secureLocalStorage from "react-secure-storage";
 
 export const Header = () => {
+  function auth() {
+    const user = secureLocalStorage.getItem("user");
+    if (user != null) {
+      return (
+        <div className="hidden sm:flex">
+          <a
+            className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75"
+            href="/"
+            onClick={Logout}
+          >
+            Logout
+          </a>
+        </div>
+      );
+    } else {
+      return(
+      <>
+        <Link
+          className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow dark:hover:bg-teal-500"
+          to="/login"
+        >
+          Login
+        </Link>
+      </>
+      );
+    }
+  }
+
   return (
     <div>
       <header className="bg-white dark:bg-gray-900">
@@ -44,64 +74,12 @@ export const Header = () => {
                       Expense
                     </Link>
                   </li>
-
-                  {/* <li>
-                    <a
-                      className="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                      href="#"
-                    >
-                      History
-                    </a>
-                  </li> */}
-{/* 
-                  <li>
-                    <a
-                      className="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                      href="#"
-                    >
-                      Services
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      className="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                      href="#"
-                    >
-                      Projects
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      className="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                      href="#"
-                    >
-                      Blog
-                    </a>
-                  </li> */}
                 </ul>
               </nav>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="sm:flex sm:gap-4">
-                <Link
-                  className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow dark:hover:bg-teal-500"
-                  to="/login"
-                >
-                  Login
-                </Link>
-
-                <div className="hidden sm:flex">
-                  <a
-                    className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75"
-                    href="#"
-                  >
-                    Register
-                  </a>
-                </div>
-              </div>
+              <div className="sm:flex sm:gap-4">{auth()}</div>
 
               <div className="block md:hidden">
                 <button className="rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">

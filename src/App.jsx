@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Route , Routes } from 'react-router-dom'
 import Example from './components/Example'
 import { Header } from './components/Header'
-import Login from './components/Login'
+import Login from './pages/auth/Login'
 
 function App() {
 
