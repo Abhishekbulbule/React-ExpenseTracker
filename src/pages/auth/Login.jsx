@@ -10,9 +10,11 @@ const Login = () => {
   const signInWithGoogle = async()=>{
     const results = await signInWithPopup(auth, provider);
     const obj = [
-      results.user.providerData[0], results.user.emailVerified, results.user.metadata.lastSignInTime
+      results.user.providerData[0], results.user.emailVerified, results.user.metadata.lastSignInTime, results.user.uid
     ]
+    console.log(results)
     secureLocalStorage.setItem('user',obj);
+    console.log(secureLocalStorage.getItem('user')[3])
     navigate('/expense')
   }
   return (
