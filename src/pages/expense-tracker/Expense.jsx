@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
-import secureLocalStorage from "react-secure-storage";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
+import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import { useGetAmount } from "../../hooks/useGetAmount";
 const Expense = () => {
+  
   const { addTransaction } = useAddTransaction();
   const { transactions } = useGetTransactions();
+  const { uname, photo } = useGetUserInfo();
+  const {income, expense, balance} = useGetAmount();
   const [description, setDescription] = useState("");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionType, setTransactionType] = useState("expense");
@@ -22,25 +26,14 @@ const Expense = () => {
   };
 
   function convertFirestoreTimestamp(timestampArray) {
-    // Extract seconds and nanoseconds from the array
-    if(timestampArray.seconds!=null){
-      
+    if(timestampArray!=null){
       const second = timestampArray.seconds;
       const nanoseconds = timestampArray.nanoseconds;
-  
-      // Convert to milliseconds and create a Date object
       const date = new Date(second * 1000 + nanoseconds / 1000000);
-  
-      // Format the date and time
       const day = date.getDate();
-      const month = date.getMonth() + 1; // Months are zero-based in JavaScript
+      const month = date.getMonth() + 1; 
       const year = date.getFullYear();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const seconds = date.getSeconds();
-  
-      // Return formatted date and time
-      return `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
+      return `${day}/${month}/${year}`;
     }
 }
 
@@ -49,17 +42,28 @@ const Expense = () => {
       <section className="bg-gray-900 text-white ">
         <div className="mx-auto  px-4 py-5 justify-center">
           <div className="mx-auto max-w-3xl text-center">
+            {photo && 
+            <div className="flex items-center justify-center">
+              <img src={photo} alt={uname}  className="rounded-full p-3"/>
+            </div>
+            }
             <h1 className="bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text  font-extrabold text-3xl text-transparent sm:text-5xl ">
-              Expense Tracker
+              {uname}'s Expense Tracker
             </h1>
             <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-5 ">
-              Income
-              <span className="sm:block"> 19.00 </span>
+              Balance
+              <span className="sm:block"> {balance} </span>
             </h1>
-            <h1 className="bg-gradient-to-r from-green-500  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl ">
-              Expenses
-              <span className="sm:block"> 19.00 </span>
-            </h1>
+            <div className="grid grid-cols-2">
+              <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-2 ">
+                Income
+                <span className="sm:block"> {income} </span>
+              </h1>
+              <h1 className="bg-gradient-to-r from-green-500  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-2">
+                Expenses
+                <span className="sm:block"> {expense} </span>
+              </h1>
+            </div>
 
             <form className="mt-5" onSubmit={onAdd}>
               <div className="py-2">
@@ -161,8 +165,8 @@ const Expense = () => {
         <div className="overflow-x-auto ">
           <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm dark:divide-gray-700 dark:bg-gray-900 py-3">
             <thead className="text-center">
-              <tr className="whitespace-nowrap px-4 py-2 text-3xl text-gray-900 dark:text-white">
-                Transactions
+              <tr className="whitespace-nowrap px-4 py-5 text-3xl text-gray-900 dark:text-white">
+                <th colSpan={4}>Transactions</th>
               </tr>
               <tr>
                 <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white">

@@ -1,36 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Logout } from "../pages/auth/Logout";
 import secureLocalStorage from "react-secure-storage";
-
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../config/firebase-config";
 export const Header = () => {
-  function auth() {
-    const user = secureLocalStorage.getItem("user");
-    if (user != null) {
-      return (
-        <div className="hidden sm:flex">
-          <a
-            className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75"
-            href="/"
-            onClick={Logout}
-          >
-            Logout
-          </a>
-        </div>
-      );
-    } else {
-      return(
-      <>
-        <Link
-          className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow dark:hover:bg-teal-500"
-          to="/login"
-        >
-          Login
-        </Link>
-      </>
-      );
+  const user = secureLocalStorage.getItem("user");
+  const navigate = useNavigate();
+  const Logout = async () => {
+    try {
+      await signOut(auth);
+      secureLocalStorage.removeItem("user");
+      secureLocalStorage.clear();
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+      return;
     }
-  }
+  };
 
   return (
     <div>
@@ -69,7 +56,7 @@ export const Header = () => {
                   <li>
                     <Link
                       className="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                      to="/expense"
+                      to={user!=null?"/expense":"/login"}
                     >
                       Expense
                     </Link>
@@ -79,7 +66,27 @@ export const Header = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="sm:flex sm:gap-4">{auth()}</div>
+              <div className="sm:flex sm:gap-4">
+                {user != null ? (
+                  <div className="hidden sm:flex">
+                    <button
+                      className="rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75"
+                      onClick={Logout}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow dark:hover:bg-teal-500"
+                      to="/login"
+                    >
+                      Login
+                    </Link>
+                  </>
+                )}
+              </div>
 
               <div className="block md:hidden">
                 <button className="rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
@@ -103,46 +110,7 @@ export const Header = () => {
           </div>
         </div>
       </header>
-      {/* <section>
-        <div className="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:h-screen lg:grid-cols-2">
-            <div className="relative z-10 lg:py-16">
-              <div className="relative h-44 sm:h-50 lg:h-full">
-                <img
-                  alt=""
-                  src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
-            </div>
-
-            <div className="relative flex items-center bg-gray-100">
-              <span className="hidden lg:absolute lg:inset-y-0 lg:-start-10 lg:block lg:w-10 lg:bg-gray-100"></span>
-
-              <div className="p-8 sm:p-12 lg:p-18">
-                <h2 className="text-2xl font-bold sm:text-3xl">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Tempore, debitis.
-                </h2>
-
-                <p className="mt-4 text-gray-600">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Aliquid, molestiae! Quidem est esse numquam odio deleniti,
-                  beatae, magni dolores provident quaerat totam eos, aperiam
-                  architecto eius quis quibusdam fugiat dicta.
-                </p>
-
-                <a
-                  href="#"
-                  className="mt-8 inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-                >
-                  Get in Touch
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
+      
     </div>
   );
 };
