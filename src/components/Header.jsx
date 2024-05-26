@@ -41,7 +41,7 @@ export const Header = () => {
               </a>
             </div>
 
-            <div className="hidden md:block">
+            <div className=" sm:block">
               <nav aria-label="Global">
                 <ul className="flex items-center gap-6 text-sm">
                   <li>
@@ -105,6 +105,7 @@ export const Header = () => {
                     />
                   </svg>
                 </button>
+                
               </div>
             </div>
           </div>

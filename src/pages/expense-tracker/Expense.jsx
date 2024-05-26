@@ -3,11 +3,15 @@ import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { useGetAmount } from "../../hooks/useGetAmount";
+import { Navigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 const Expense = () => {
-  
+  if(secureLocalStorage.getItem('user') == null){
+    return <Navigate to={'/login'}/>
+  }
+  const { uname, photo } = useGetUserInfo();
   const { addTransaction } = useAddTransaction();
   const { transactions } = useGetTransactions();
-  const { uname, photo } = useGetUserInfo();
   const {income, expense, balance} = useGetAmount();
   const [description, setDescription] = useState("");
   const [transactionAmount, setTransactionAmount] = useState(0);
@@ -15,14 +19,8 @@ const Expense = () => {
   const onAdd = async (e) => {
     e.preventDefault();
     addTransaction({ description, transactionAmount, transactionType });
-    console.log(
-      "Adding: ",
-      description,
-      "  ",
-      transactionAmount,
-      "  ",
-      transactionType
-    );
+    setDescription('');
+    setTransactionAmount(0);
   };
 
   function convertFirestoreTimestamp(timestampArray) {
@@ -42,26 +40,25 @@ const Expense = () => {
       <section className="bg-gray-900 text-white ">
         <div className="mx-auto  px-4 py-5 justify-center">
           <div className="mx-auto max-w-3xl text-center">
-            {photo && 
-            <div className="flex items-center justify-center">
-              <img src={photo} alt={uname}  className="rounded-full p-3"/>
-            </div>
-            }
-            <h1 className="bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text  font-extrabold text-3xl text-transparent sm:text-5xl ">
+            
+            <h1 className="bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text  font-extrabold text-3xl text-transparent sm:text-4xl ">
               {uname}'s Expense Tracker
             </h1>
-            <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-5 ">
+            <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-2xl text-transparent sm:text-3xl py-5 ">
               Balance
-              <span className="sm:block"> {balance} </span>
+              {balance >=0 ? (
+              <p className="sm:block"> ₹{balance} </p>
+            ):(
+              <p className="sm:block">-₹{balance*-1} </p>)}
             </h1>
             <div className="grid grid-cols-2">
-              <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-2 ">
+              <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-2xl text-transparent sm:text-3xl py-2 ">
                 Income
-                <span className="sm:block"> {income} </span>
+                <span className="sm:block"> ₹{income} </span>
               </h1>
-              <h1 className="bg-gradient-to-r from-green-500  to-purple-600 bg-clip-text  font-extrabold text-1xl text-transparent sm:text-3xl py-2">
+              <h1 className="bg-gradient-to-r from-green-500  to-purple-600 bg-clip-text  font-extrabold text-2xl text-transparent sm:text-3xl py-2">
                 Expenses
-                <span className="sm:block"> {expense} </span>
+                <span className="sm:block"> ₹{expense} </span>
               </h1>
             </div>
 
@@ -76,6 +73,7 @@ const Expense = () => {
                     id="UserEmail"
                     placeholder="Enter Expense"
                     className="peer h-8 w-full border-none bg-transparent p-1 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm dark:text-white"
+                    value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
 
@@ -94,6 +92,7 @@ const Expense = () => {
                     id="userAmount"
                     placeholder="Enter Amount"
                     className="peer h-8 w-full border-none bg-transparent p-1 placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm dark:text-white"
+                    value={transactionAmount}
                     onChange={(e) => setTransactionAmount(e.target.value)}
                   />
 
@@ -200,7 +199,7 @@ const Expense = () => {
                       {description}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">
-                      {transactionAmount}
+                      ₹{transactionAmount}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">
                       {transactionType}
