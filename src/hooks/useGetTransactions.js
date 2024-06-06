@@ -2,9 +2,11 @@ import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestor
 import React, { useEffect, useState } from 'react'
 import { db } from '../config/firebase-config';
 import { useGetUserInfo } from './useGetUserInfo';
+import { useSelector } from 'react-redux';
 
 export const useGetTransactions = () => {
-    const {uid} = useGetUserInfo();
+    const userData = useSelector((state)=> state);
+    // const {uid} = useGetUserInfo();
     const [transactions, setTransactions] = useState([]);
     const transactionCollectionRef = collection(db,'transactions');
 
@@ -12,7 +14,7 @@ export const useGetTransactions = () => {
         let unSubscribe;
         try {
             const queryTransactions = query(
-                transactionCollectionRef, where("uid" ,"==", uid), orderBy("createdAT")
+                transactionCollectionRef, where("uid" ,"==", userData.id), orderBy("createdAT")
             );
             unSubscribe = onSnapshot(queryTransactions, (snapshot)=>{
                 let docs = [];

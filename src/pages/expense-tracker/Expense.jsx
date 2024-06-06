@@ -5,12 +5,19 @@ import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { useGetAmount } from "../../hooks/useGetAmount";
 import { Navigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux-slicers/userSlice";
 const Expense = () => {
   if(secureLocalStorage.getItem('user') == null){
     return <Navigate to={'/login'}/>
   }
-
-  const { uname, photo } = useGetUserInfo();
+  
+  const dispatch = useDispatch();
+  const userData = useSelector((state)=> state);
+  useEffect(()=>{
+    dispatch(getUser());
+  });
+  
   const { addTransaction } = useAddTransaction();
   const { transactions } = useGetTransactions();
   const {income, expense, balance} = useGetAmount();
@@ -23,7 +30,7 @@ const Expense = () => {
     setDescription('');
     setTransactionAmount(0);
   };
-
+    
   function convertFirestoreTimestamp(timestampArray) {
     if(timestampArray!=null){
       const second = timestampArray.seconds;
@@ -43,9 +50,9 @@ const Expense = () => {
           <div className="mx-auto max-w-3xl text-center">
             
             <h1 className="bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text  font-extrabold text-3xl text-transparent sm:text-4xl ">
-              {uname}'s Expense Tracker
+              {userData.name}'s Expense Tracker
             </h1>
-            <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-2xl text-transparent sm:text-3xl py-5 ">
+           <h1 className="bg-gradient-to-r from-green-400  to-purple-600 bg-clip-text  font-extrabold text-2xl text-transparent sm:text-3xl py-5 ">
               Balance
               {balance >=0 ? (
               <p className="sm:block"> ₹{balance} </p>

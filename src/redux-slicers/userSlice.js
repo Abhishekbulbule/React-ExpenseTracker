@@ -4,7 +4,8 @@ import secureLocalStorage from "react-secure-storage"
 const userSlice = createSlice({
     name:"user",
     initialState:{name:'', id:'', photo:'', email:'',phone:'',emailVerified:"",lastSignIn:''},
-    reducer:{
+    reducers:{
+        
         removeUser:(state,action)=>{
             secureLocalStorage.clear();
             state = {name:'', id:'', photo:'', email:'',phone:'',emailVerified:"",lastSignIn:''};
@@ -19,7 +20,6 @@ const userSlice = createSlice({
             state.lastSignIn = secureLocalStorage.getItem('user')[2];
         }
     },
-
 });
 
 export const {getUser,removeUser} = userSlice.actions;
