@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
@@ -9,6 +9,7 @@ const Expense = () => {
   if(secureLocalStorage.getItem('user') == null){
     return <Navigate to={'/login'}/>
   }
+
   const { uname, photo } = useGetUserInfo();
   const { addTransaction } = useAddTransaction();
   const { transactions } = useGetTransactions();

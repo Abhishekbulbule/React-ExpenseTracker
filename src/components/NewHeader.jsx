@@ -16,18 +16,19 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useGetUserInfo } from '../hooks/useGetUserInfo';
+import { useSelector } from 'react-redux';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', current: true },
-  { name: 'Expense', href: '/expense', current: false },
+  // { name: 'Dashboard', href: '/', current: true },
+  { name: 'Expense', href: '/', current: false },
   { name: 'Projects', href: '#', current: false },
 ]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-
 export default function NewHeader() {
+  const userData = useSelector(state=>state.user);
   const user = secureLocalStorage.getItem("user");
   let photoUrl = "";
   if(user != null){
@@ -40,7 +41,7 @@ export default function NewHeader() {
       await signOut(auth);
       secureLocalStorage.removeItem("user");
       secureLocalStorage.clear();
-      navigate("/");
+      navigate("/login");
     } catch (e) {
       console.log(e);
       return;

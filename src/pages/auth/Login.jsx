@@ -3,23 +3,26 @@ import { auth, provider } from "../../config/firebase-config";
 import { signInWithPopup } from "firebase/auth";
 import secureLocalStorage from "react-secure-storage";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getUser } from "../../redux-slicers/userSlice";
 // import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 
 
 const Login = () => {
   const navigate = useNavigate();
-  console.log(secureLocalStorage.getItem('user'))
+  const dispatch = useDispatch();
   if(secureLocalStorage.getItem('user') != undefined){
-    return <Navigate to={'/'}/>
+    return <Navigate to={'/login'}/> 
   }
   const signInWithGoogle = async()=>{
     const results = await signInWithPopup(auth, provider);
     const obj = [
       results.user.providerData[0], results.user.emailVerified, results.user.metadata.lastSignInTime, results.user.uid
     ]
-    secureLocalStorage.setItem('user',obj);
-    navigate('/expense')
+    await secureLocalStorage.setItem('user',obj);
+    await navigate('/')
   }
+  // dispatch(getUser());
   return (
     <div>
       <section className="relative flex flex-wrap lg:h-screen lg:items-center">

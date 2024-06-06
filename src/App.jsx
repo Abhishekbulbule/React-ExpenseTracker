@@ -11,9 +11,8 @@ function App() {
   return (<>
   <Router>
     <Routes>
-      <Route path='/' element={<><NewHeader/></>}>  </Route>
       <Route path='/login' element={<><Login/></>}>  </Route>
-      <Route path='/expense' element={<><NewHeader/><Expense/></>}>  </Route>
+      <Route path='/' element={<><NewHeader/><Expense/></>}>  </Route>
     </Routes>
   </Router>
 
